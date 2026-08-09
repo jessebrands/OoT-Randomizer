@@ -231,28 +231,15 @@ def prepare_rom(spoiler: Spoiler, world: World, rom: Rom, settings: Settings, rn
 
 def compress_rom(input_file: str, output_file: str, delete_input: bool = False) -> None:
     logger = logging.getLogger('')
-    compressor_path = "./" if is_bundled() else "bin/Compress/"
+    compressor_path = "./" if is_bundled() else "bin/libzelda64/"
     if platform.system() == 'Windows':
         if platform.machine() == 'AMD64':
-            compressor_path += "Compress.exe"
-        elif platform.machine() == 'ARM64':
-            compressor_path += "Compress_ARM64.exe"
-        else:
-            compressor_path += "Compress32.exe"
-    elif platform.system() == 'Linux':
-        if platform.machine() in ('arm64', 'aarch64', 'aarch64_be', 'armv8b', 'armv8l'):
-            compressor_path += "Compress_ARM64"
-        elif platform.machine() in ('arm', 'armv7l', 'armhf'):
-            compressor_path += "Compress_ARM32"
-        else:
-            compressor_path += "Compress"
-    elif platform.system() == 'Darwin':
-        compressor_path += "Compress.out"
+            compressor_path += "compress.exe"
     else:
         logger.info("OS not supported for ROM compression.")
         raise Exception("This operating system does not support ROM compression. You may only output patch files or uncompressed ROMs.")
 
-    run_process(logger, [compressor_path, input_file, output_file], check=True)
+    run_process(logger, [compressor_path, "-v", "-M", "data/OoT_Randomizer.zmf", input_file, output_file], check=True)
     if delete_input:
         os.remove(input_file)
 
